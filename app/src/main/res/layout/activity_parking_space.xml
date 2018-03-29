@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical">
+
+        <include layout="@layout/item_parking_spaces_list"/>
+        <include layout="@layout/parking_space_vehicle_parameters_card"/>
+        <include layout="@layout/parking_space_charger_card"/>
+        <!--<include layout="@layout/parking_space_plug_card"/>-->
+
+    </LinearLayout>
+
+</ScrollView>
