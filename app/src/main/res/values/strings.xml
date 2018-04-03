@@ -15,6 +15,7 @@
     <string name="query_find_evFastChargeParkinglots"><![CDATA[<omiEnvelope xmlns=\"http://www.opengroup.org/xsd/omi/1.0/\" version=\"1.0\" ttl=\"0\"><call msgformat=\"odf\"><msg><Objects xmlns=\"http://www.opengroup.org/xsd/odf/1.0/\"><Object><id>ParkingService</id><InfoItem name=\"FindParking\"><value type=\"odf\"><Objects><Object type=\"FindParkingRequest\"><id>Parameters</id><InfoItem type=\"schema:Distance\" name=\"DistanceFromDestination\"><value>1000</value></InfoItem><InfoItem type=\"mv:wantCharging\" name=\"wantCharging\"><value type=\"xs:boolean\">true</value></InfoItem><Object type=\"schema:GeoCoordinates\"><id>Destination</id><InfoItem name=\"latitude\"><value type=\"xs:double\">%1$f</value></InfoItem><InfoItem name=\"longitude\"><value type=\"xs:double\">%2$f</value></InfoItem></Object><Object type=\"mv:ElectricVehicle\"><id>Vehicle</id></Object><Object type=\"mv:Charger\"><id>Charger</id><Object type=\"list\"><id>Plugs</id><Object type=\"mv:Plug\"><id>Plug</id><InfoItem type=\"mv:isFastChargeCapable\" name=\"isFastChargeCapable\"><value type=\"xs:boolean\">true</value></InfoItem></Object></Object></Object></Object></Objects></value></InfoItem></Object></Objects></msg></call></omiEnvelope>]]></string>
     <string name="query_find_carParkinglots"><![CDATA[<omiEnvelope xmlns=\"http://www.opengroup.org/xsd/omi/1.0/\" version=\"1.0\" ttl=\"0\"><call msgformat=\"odf\"><msg><Objects xmlns=\"http://www.opengroup.org/xsd/odf/1.0/\"><Object><id>ParkingService</id><InfoItem name=\"FindParking\"><value unixTime=\"1503488290\" type=\"odf\" dateTime=\"2017-08-23T14:38:10.575+03:00\"><Objects><Object type=\"FindParkingRequest\"><id>Parameters</id><description lang=\"English\">List of possible parameters to request.</description><InfoItem type=\"schema:Distance\" name=\"DistanceFromDestination\" required=\"true\"><value unixTime=\"1503488290\" dateTime=\"2017-08-23T14:38:10.575+03:00\">1000</value></InfoItem><InfoItem type=\"mv:wantCharging\" name=\"wantCharging\"><value type=\"xs:boolean\">false</value></InfoItem><Object required=\"true\" type=\"schema:GeoCoordinates\"><id>Destination</id><InfoItem name=\"latitude\" required=\"true\"><value unixTime=\"1503488290\" type=\"xs:double\" dateTime=\"2017-08-23T14:38:10.575+03:00\">%1$f</value></InfoItem><InfoItem name=\"longitude\" required=\"true\"><value unixTime=\"1503488290\" type=\"xs:double\" dateTime=\"2017-08-23T14:38:10.575+03:00\">%2$f</value></InfoItem></Object><Object required=\"true\" type=\"mv:Car\"><id>Vehicle</id></Object></Object></Objects></value></InfoItem></Object></Objects></msg></call></omiEnvelope>]]></string>
     <string name="query_find_evSpaceList"><![CDATA[<omiEnvelope xmlns=\"http://www.opengroup.org/xsd/omi/1.0/\" version=\"1.0\" ttl=\"0\"><read msgformat=\"odf\"><msg><Objects xmlns=\"http://www.opengroup.org/xsd/odf/1.0/\"><Object><id>ParkingService</id><Object><id>ParkingFacilities</id><Object><id>%1$s</id><Object><id>ParkingSpaces</id></Object></Object> </Object></Object></Objects></msg></read></omiEnvelope>]]></string>
+
     <string name="filter_name_car">Car</string>
     <string name="filter_name_electric_car">Electric Car</string>
     <string name="filter_name_fast_charge">Fast Charge</string>
@@ -39,7 +40,6 @@
     <string name="yes_available">yes</string>
     <string name="no_available">no</string>
     <string name="ev_charger_available_label">EV Charger available:</string>
-    <string name="vehicle_type_label">Vehicle Type:</string>
     <string name="vehicle_width_limit_label">Vehicle Width Limit:</string>
     <string name="vehicle_height_limit_label">Vehicle Height Limit:</string>
     <string name="vehicle_length_limit_label">Vehicle Length Limit:</string>
@@ -52,5 +52,6 @@
     <string name="power_label">Power in KW:</string>
     <string name="fast_charge_label">Fast Charge Available:</string>
     <string name="three_phased_current_label">Three Phased Current Available:</string>
+    <string name="not_known">n/a</string>
 
 </resources>

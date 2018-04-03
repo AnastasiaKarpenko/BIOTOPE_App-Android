@@ -163,7 +163,7 @@ public class XmlParser {
                     if (element.getAttribute("type").equals("schema:GeoCoordinates")) {
                         GeoCoordinates position = parseGeoCoordinates(element);
                         parkingLot.setGeoCoordinates(position);
-                    } else if (element.getAttribute("type").equals("list")) {
+                    }  else if (element.getAttribute("type").equals("list")) {
                         String id = element.getFirstChild().getTextContent();
                         if (id.equals("ParkingSpaces")) {
                             parkingLot.setParkingSpaces(parseParkingSpacesList(element));
