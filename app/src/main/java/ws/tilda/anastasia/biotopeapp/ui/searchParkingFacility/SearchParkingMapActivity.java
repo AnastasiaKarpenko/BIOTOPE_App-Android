@@ -166,7 +166,7 @@ public class SearchParkingMapActivity extends AppCompatActivity {
 
     private void findParking(final Location location) {
         final SearchParkingMapFragment parkingMapFragment = (SearchParkingMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        parkingMapFragment.findParkingLot(location, getString(R.string.query_find_carParkinglots));
+//        parkingMapFragment.findParkingLot(location, getString(R.string.query_find_carParkinglots));
 
 
         mCarFilterButton.setOnClickListener(new View.OnClickListener() {

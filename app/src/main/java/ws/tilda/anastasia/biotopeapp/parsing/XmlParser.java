@@ -399,9 +399,10 @@ public class XmlParser {
                         parkingSpace.setVehicleLengthLimit(vehicleLengthLimit);
                     }
                 } else if (element.getAttribute("type").equals("mv:Charger")) {
+                    parkingSpace.setHasEvCharging(true);
                     Charger charger = parseCharger(element);
                     parkingSpace.setCharger(charger);
-                    parkingSpace.setHasEvCharging(true);
+
                 }
             }
         }
