@@ -112,7 +112,7 @@ public class XmlParser {
                 Element objectElement = (Element) object;
 
                 if (objectElement.getTagName().equals("Object")) {
-                    List<ParkingFacility> parkingFacilities = parseParkingServiceList(objectElement);
+                    List<ParkingFacility> parkingFacilities = parseParkingFacilityList(objectElement);
                     parkingService.setParkingFacilities(parkingFacilities);
                 }
             }
@@ -120,7 +120,7 @@ public class XmlParser {
         return parkingService;
     }
 
-    private List<ParkingFacility> parseParkingServiceList(Element objectElement) {
+    private List<ParkingFacility> parseParkingFacilityList(Element objectElement) {
         List<ParkingFacility> parkingLots = new ArrayList<>();
         NodeList nodes = objectElement.getChildNodes();
 
@@ -163,16 +163,15 @@ public class XmlParser {
                     if (element.getAttribute("type").equals("schema:GeoCoordinates")) {
                         GeoCoordinates position = parseGeoCoordinates(element);
                         parkingLot.setGeoCoordinates(position);
-                    }  else if (element.getAttribute("type").equals("list")) {
+                    } else if (element.getAttribute("type").equals("schema:OpeningHoursSpecification")) {
+                        OpeningHoursSpecifications openingHours = parseOpeningHoursSpecification(element);
+                        parkingLot.setOpeningHoursSpecifications(openingHours);
+                    } else if (element.getAttribute("type").equals("list")) {
                         String id = element.getFirstChild().getTextContent();
                         if (id.equals("ParkingSpaces")) {
                             parkingLot.setParkingSpaces(parseParkingSpacesList(element));
                         } else if (id.equals("Capacities")) {
                             parkingLot.setCapacities(parseCapacities(element));
-
-                        } else if (id.equals("openingHoursSpecifications")) {
-                            OpeningHoursSpecifications openingHours = parseOpeningHoursSpecification(element);
-                            parkingLot.setOpeningHoursSpecifications(openingHours);
                         }
                     }
                 }

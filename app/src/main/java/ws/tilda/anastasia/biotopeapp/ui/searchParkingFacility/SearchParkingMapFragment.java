@@ -59,8 +59,6 @@ public class SearchParkingMapFragment extends SupportMapFragment {
     };
 
     public static final String PARKING_FACILITY_EXTRA = "PARKING_FACILITY_EXTRA";
-    public static final String PARKINGLOT_LAT_EXTRA = "PARKINGLOT_LAT_EXTRA";
-    public static final String PARKINGLOT_LON_EXTRA = "PARKINGLOT_LON_EXTRA";
 
     private GoogleApiClient mClient;
     private GoogleMap mMap;
@@ -129,8 +127,6 @@ public class SearchParkingMapFragment extends SupportMapFragment {
                     private Intent setIntent(ParkingFacility parkingLot) {
                         Intent intent = new Intent(getActivity(), ParkingFacilityActivity.class);
                         intent.putExtra(PARKING_FACILITY_EXTRA, parkingLot);
-                        intent.putExtra(PARKINGLOT_LAT_EXTRA, parkingLot.getGeoCoordinates().getLatitude());
-                        intent.putExtra(PARKINGLOT_LON_EXTRA, parkingLot.getGeoCoordinates().getLongitude());
                         return intent;
                     }
                 });

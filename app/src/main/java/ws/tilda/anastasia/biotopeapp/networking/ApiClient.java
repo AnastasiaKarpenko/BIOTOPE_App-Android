@@ -14,7 +14,7 @@ public class ApiClient {
 
 
     private static final String APIPATH = "http:biotope.cs.hut.fi/omi/node/";
-    private static final String APIPATH_ps = "http:veivi.parkkis.com:8080";
+    private static final String APIPATH_ps = "http://veivi.parkkis.com:8080";
 
     private static OkHttpClient.Builder okhttpClientBuilder = new OkHttpClient.Builder();
 
@@ -34,7 +34,7 @@ public class ApiClient {
     @NonNull
     private static Retrofit getRetrofit() {
         return new Retrofit.Builder()
-                .baseUrl(APIPATH)
+                .baseUrl(APIPATH_ps)
                 .addConverterFactory(new ToStringConverterFactory())
                 .client(okhttpClientBuilder.build())
                 .build();
