@@ -42,9 +42,11 @@ import retrofit2.Call;
 import ws.tilda.anastasia.biotopeapp.BiotopeApp;
 import ws.tilda.anastasia.biotopeapp.R;
 import ws.tilda.anastasia.biotopeapp.networking.ApiClient;
+import ws.tilda.anastasia.biotopeapp.networking.ApiClient_2;
 import ws.tilda.anastasia.biotopeapp.objects.GeoCoordinates;
 import ws.tilda.anastasia.biotopeapp.objects.ParkingFacility;
 import ws.tilda.anastasia.biotopeapp.objects.ParkingService;
+import ws.tilda.anastasia.biotopeapp.parsing.IotbnbParser;
 import ws.tilda.anastasia.biotopeapp.parsing.XmlParser;
 import ws.tilda.anastasia.biotopeapp.ui.parkingFacility.ParkingFacilityActivity;
 
@@ -52,6 +54,8 @@ import ws.tilda.anastasia.biotopeapp.ui.parkingFacility.ParkingFacilityActivity;
 public class SearchParkingMapFragment extends SupportMapFragment {
     public static final String TAG = "ChargerMapFragment";
     public static final int REQUEST_LOCATION_PERMISSIONS = 0;
+    private static final String APIPATH_ps = "http://veivi.parkkis.com:8080";
+
 
     private static final String[] LOCATION_PERMISSIONS = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -64,6 +68,7 @@ public class SearchParkingMapFragment extends SupportMapFragment {
     private GoogleMap mMap;
 
     private XmlParser xmlParser;
+    private IotbnbParser iotbnbParser;
 
 
     @Override
@@ -72,6 +77,7 @@ public class SearchParkingMapFragment extends SupportMapFragment {
         setHasOptionsMenu(true);
 
         xmlParser = new XmlParser();
+        iotbnbParser = new IotbnbParser();
 
         mClient = getGoogleApiClient();
 
@@ -197,9 +203,19 @@ public class SearchParkingMapFragment extends SupportMapFragment {
                 });
     }
 
-    public void findParkingLot(Location location, String query) {
+    public void findParkingLot(Location location, String query, String apiPath) {
         if (BiotopeApp.hasNetwork()) {
-            new SearchParkingTask().execute(location, query);
+            new SearchParkingTask().execute(location, query, apiPath);
+        } else {
+            Toast.makeText(getContext(), R.string.no_network_connection_message, Toast.LENGTH_SHORT)
+                    .show();
+        }
+
+    }
+
+    public void findNodeUri(Location location, String query, String apiPath) {
+        if (BiotopeApp.hasNetwork()) {
+            new SearchIotbnbTask().execute(location, query, apiPath);
         } else {
             Toast.makeText(getContext(), R.string.no_network_connection_message, Toast.LENGTH_SHORT)
                     .show();
@@ -303,18 +319,31 @@ public class SearchParkingMapFragment extends SupportMapFragment {
         return parkingService;
     }
 
+    private String parseNodeUri(InputStream stream) {
+        String nodeUri = null;
+        try {
+            nodeUri = iotbnbParser.parse(stream).getAvailableServices().get(3).getOmiNodeUrl();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+         return nodeUri;
+    }
+
     private class SearchParkingTask extends AsyncTask<Object, Object, ParkingService> {
         private ParkingService parkingService = new ParkingService();
         private String response;
-        private String returnCode;
         private String query;
+        private String apiPath;
+
 
         @Override
         protected ParkingService doInBackground(Object... params) {
             Location location = (Location) params[0];
             query = (String) params[1];
+            apiPath = (String) params[2];
 
-            Call<String> call = callingApi(location);
+            Call<String> call = callingApi(location, apiPath);
             InputStream stream = null;
             try {
                 stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
@@ -341,21 +370,12 @@ public class SearchParkingMapFragment extends SupportMapFragment {
             return response;
         }
 
-        private String getReturnCode(InputStream stream) {
-            String returnCode = null;
-            try {
-                returnCode = xmlParser.parseReturnCode(stream);
-            } catch (XmlPullParserException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-            return returnCode;
-        }
-
-        private Call<String> callingApi(Location location) {
+        private Call<String> callingApi(Location location, String apiPath) {
+//            ApiClient_2.setNewBaseUrl(apiPath);
+//            ApiClient_2.RetrofitService retrofitService = ApiClient_2.getApi();
             ApiClient.RetrofitService retrofitService = ApiClient.getApi();
+
             return retrofitService.getResponse(getQueryFormattedString(location, query));
 
         }
@@ -375,6 +395,71 @@ public class SearchParkingMapFragment extends SupportMapFragment {
         @Override
         protected void onPostExecute(ParkingService parkingService) {
             updateUI(parkingService);
+        }
+    }
+
+    private class SearchIotbnbTask extends AsyncTask<Object, Object, String> {
+        private String nodeUri = null;
+        private String response;
+        private String query;
+        private String apiPath;
+        private Location location;
+
+        @Override
+        protected String doInBackground(Object... params) {
+            location = (Location) params[0];
+            query = (String) params[1];
+            apiPath = (String) params[2];
+
+            Call<String> call = callingApi(location);
+            InputStream stream = null;
+            try {
+                stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
+                nodeUri = parseNodeUri(stream);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            return nodeUri;
+        }
+
+        private String getResponse(Call<String> call) {
+            try {
+                String getResponse = call.execute().body();
+                if (getResponse == null) {
+                    Log.e(TAG, "Response is null");
+                } else {
+                    response = getResponse;
+                }
+            } catch (IOException e) {
+                e.getMessage();
+            }
+
+            return response;
+        }
+
+
+        private Call<String> callingApi(Location location) {
+            ApiClient_2.RetrofitService retrofitService = ApiClient_2.getApi();
+            return retrofitService.getResponse(getQueryFormattedString(location, query));
+        }
+
+
+        private String getQueryFormattedString(Location location, String query) {
+            float desiredLatitude = (float) location.getLatitude();
+            float desiredLongitude = (float) location.getLongitude();
+            String formattedQuery = String.format(Locale.US,
+                    query,
+                    desiredLatitude,
+                    desiredLongitude);
+
+            return formattedQuery;
+        }
+
+        @Override
+        protected void onPostExecute(String nodeUri) {
+//            findParkingLot(location, getString(R.string.query_find_evParkinglots), nodeUri);
+            Toast.makeText(getContext(), nodeUri, Toast.LENGTH_SHORT).show();
         }
     }
 

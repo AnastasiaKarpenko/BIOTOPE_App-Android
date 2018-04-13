@@ -36,6 +36,7 @@ public class ParkingFacilityActivity extends AppCompatActivity implements Parkin
     public static final String TAG = "ParkingFacilityActivity";
 
     private XmlParser xmlParser = new XmlParser();
+    private ParkingFacility mParkingfacility;
 
 
     @Override
@@ -44,8 +45,8 @@ public class ParkingFacilityActivity extends AppCompatActivity implements Parkin
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_parking_facility);
 
-        ParkingFacility parkingfacility = getIntent().getParcelableExtra(PARKING_FACILITY_EXTRA);
-        String parkingFacilityId = parkingfacility.getId();
+        mParkingfacility = getIntent().getParcelableExtra(PARKING_FACILITY_EXTRA);
+        String parkingFacilityId = mParkingfacility.getId();
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -100,10 +101,11 @@ public class ParkingFacilityActivity extends AppCompatActivity implements Parkin
     }
 
     @Override
-    public void onListFragmentInteraction(ParkingSpace parkingSpace) {
+    public void onListFragmentInteraction(ParkingSpace parkingSpace, ParkingFacility parkingFacility) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARKING_SPACE_EXTRA, parkingSpace);
-        ParkingSpaceActivity.launch(this, parkingSpace);
+        bundle.putParcelable(PARKING_FACILITY_EXTRA, parkingFacility);
+        ParkingSpaceActivity.launch(this, parkingSpace, parkingFacility);
 
     }
 
@@ -184,5 +186,4 @@ public class ParkingFacilityActivity extends AppCompatActivity implements Parkin
             updateUi(parkingService);
         }
     }
-
 }

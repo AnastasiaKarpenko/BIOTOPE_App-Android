@@ -33,6 +33,9 @@ import ws.tilda.anastasia.biotopeapp.R;
 
 public class SearchParkingMapActivity extends AppCompatActivity {
 
+    private static final String APIPATH_ps = "http://veivi.parkkis.com:8080";
+    public static final String APIPATH_iotbnb = "http://biotope.serval.uni.lu:8383/";
+
     public static final int REQUEST_ERROR = 0;
     private static final String TAG = "SearchParkingActivity";
 
@@ -47,6 +50,7 @@ public class SearchParkingMapActivity extends AppCompatActivity {
     private Button mCarFilterButton;
     private Button mEvFilterButton;
     private Button mFastEvFilterButton;
+    private Button mIotbnbFilterButton;
 
     private Location mLocation;
     public static final String LOCATION_KEY = "LOCATION_KEY";
@@ -77,7 +81,7 @@ public class SearchParkingMapActivity extends AppCompatActivity {
         mCarFilterButton = findViewById(R.id.filter_button_car);
         mEvFilterButton = findViewById(R.id.filter_button_ev);
         mFastEvFilterButton = findViewById(R.id.filter_button_evfast);
-
+//        mIotbnbFilterButton = findViewById(R.id.filter_button_iotbnb);
     }
 
     @Override
@@ -166,29 +170,38 @@ public class SearchParkingMapActivity extends AppCompatActivity {
 
     private void findParking(final Location location) {
         final SearchParkingMapFragment parkingMapFragment = (SearchParkingMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-//        parkingMapFragment.findParkingLot(location, getString(R.string.query_find_carParkinglots));
+//        parkingMapFragment.findParkingLot(location, getString(R.string.query_find_carParkinglots), APIPATH_ps);
 
 
         mCarFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                parkingMapFragment.findParkingLot(location, getString(R.string.query_find_carParkinglots));
+                parkingMapFragment.findParkingLot(location, getString(R.string.query_find_carParkinglots), APIPATH_ps);
             }
         });
 
         mEvFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                parkingMapFragment.findParkingLot(location, getString(R.string.query_find_evParkinglots));
+                parkingMapFragment.findParkingLot(location, getString(R.string.query_find_evParkinglots), APIPATH_ps);
             }
         });
 
         mFastEvFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                parkingMapFragment.findParkingLot(location, getString(R.string.query_find_evFastChargeParkinglots));
+                parkingMapFragment.findParkingLot(location, getString(R.string.query_find_evFastChargeParkinglots), APIPATH_ps);
             }
         });
+
+//        mIotbnbFilterButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                parkingMapFragment.findNodeUri(location, getString(R.string.query_search_all_services_iotbnb),
+//                        APIPATH_iotbnb);
+//                Toast.makeText(SearchParkingMapActivity.this, "Update needed", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
     }
 

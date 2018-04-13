@@ -9,16 +9,19 @@ import android.widget.TextView;
 import java.util.List;
 
 import ws.tilda.anastasia.biotopeapp.R;
+import ws.tilda.anastasia.biotopeapp.objects.ParkingFacility;
 import ws.tilda.anastasia.biotopeapp.objects.ParkingSpace;
 
 public class ParkingSpacesAdapter extends RecyclerView.Adapter<ParkingSpacesAdapter.ViewHolder> {
     private List<ParkingSpace> mParkingSpaces;
     private ParkingSpacesFragment.OnListFragmentInteractionListener mListener;
+    private ParkingFacility mParkingFacility;
 
     public ParkingSpacesAdapter(List<ParkingSpace> parkingSpaces,
-                                ParkingSpacesFragment.OnListFragmentInteractionListener listener) {
+                                ParkingSpacesFragment.OnListFragmentInteractionListener listener, ParkingFacility pf) {
         mParkingSpaces = parkingSpaces;
         mListener = listener;
+        mParkingFacility = pf;
     }
 
 
@@ -43,7 +46,7 @@ public class ParkingSpacesAdapter extends RecyclerView.Adapter<ParkingSpacesAdap
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    mListener.onListFragmentInteraction(holder.mParkingSpace);
+                    mListener.onListFragmentInteraction(holder.mParkingSpace, mParkingFacility);
                 }
             }
         });

@@ -16,6 +16,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/start_charging_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/start_charging_button_text"
+            android:layout_gravity="center_vertical|center_horizontal"/>
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -316,8 +323,6 @@
                 android:textColor="#838B8B"
                 android:textSize="14sp"/>
         </LinearLayout>
-
-
 
     </LinearLayout>
 

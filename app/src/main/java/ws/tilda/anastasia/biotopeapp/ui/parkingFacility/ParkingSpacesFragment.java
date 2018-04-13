@@ -15,6 +15,7 @@ import ws.tilda.anastasia.biotopeapp.objects.ParkingSpace;
 
 public class ParkingSpacesFragment extends Fragment {
     public static final String PARKING_FACILITY_EXTRA = "PARKING_FACILITY_EXTRA";
+    public static final String PARKING_FACILITY_ID_EXTRA = "PARKING_FACILITY_ID_EXTRA";
     private ParkingFacility mParkingFacility;
     private Context mContext;
     private RecyclerView mParkingSpacesRecyclerView;
@@ -85,7 +86,7 @@ public class ParkingSpacesFragment extends Fragment {
 
     private void setupAdapter(List<ParkingSpace> parkingSpaces) {
         if (isAdded()) {
-            mParkingSpacesRecyclerView.setAdapter(new ParkingSpacesAdapter(parkingSpaces, mListener));
+            mParkingSpacesRecyclerView.setAdapter(new ParkingSpacesAdapter(parkingSpaces, mListener, mParkingFacility));
         }
     }
 
@@ -96,7 +97,7 @@ public class ParkingSpacesFragment extends Fragment {
     }
 
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(ParkingSpace parkingSpace);
+        void onListFragmentInteraction(ParkingSpace parkingSpace, ParkingFacility parkingFacility);
     }
 
 }
