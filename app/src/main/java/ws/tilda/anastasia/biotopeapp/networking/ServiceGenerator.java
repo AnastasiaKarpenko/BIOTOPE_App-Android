@@ -13,7 +13,6 @@ import ws.tilda.anastasia.biotopeapp.parsing.ToStringConverterFactory;
 public class ServiceGenerator {
 
     public static String apiBaseUrl = "http://biotope.serval.uni.lu:8383/";
-    private static final String BASE_URL = "http://biotope.serval.uni.lu:8383/";
 
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
@@ -41,12 +40,16 @@ public class ServiceGenerator {
             Class<S> serviceClass) {
         if (!httpClient.interceptors().contains(logging)) {
             httpClient.addInterceptor(logging);
-            builder.client(httpClient.connectTimeout(20, TimeUnit.SECONDS)
-                    .writeTimeout(20, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .build());
-            retrofit = builder.build();
         }
+
+        OkHttpClient okHttpClient = httpClient.connectTimeout(20, TimeUnit.SECONDS)
+                .writeTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .build();
+
+        builder.client(okHttpClient);
+
+        retrofit = builder.build();
 
         return retrofit.create(serviceClass);
     }

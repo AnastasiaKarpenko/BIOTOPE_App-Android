@@ -461,7 +461,7 @@ public class SearchParkingMapFragment extends SupportMapFragment {
         @Override
         protected void onPostExecute(String nodeUri) {
             findParkingLot(location, getString(R.string.query_find_evParkinglots), nodeUri);
-            Toast.makeText(getContext(), nodeUri, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), nodeUri, Toast.LENGTH_SHORT).show();
         }
     }
 

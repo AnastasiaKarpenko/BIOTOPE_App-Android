@@ -197,7 +197,6 @@ public class SearchParkingMapActivity extends AppCompatActivity {
             public void onClick(View v) {
                 parkingMapFragment.findNodeUri(location, getString(R.string.query_search_all_services_iotbnb),
                         APIPATH_iotbnb);
-//                Toast.makeText(SearchParkingMapActivity.this, "Update needed", Toast.LENGTH_SHORT).show();
             }
         });
 
