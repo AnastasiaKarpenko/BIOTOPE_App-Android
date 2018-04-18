@@ -104,7 +104,7 @@ public class ParkingSpaceActivity extends AppCompatActivity {
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(mParkingSpace.getId());
+            getSupportActionBar().setTitle("Parking Space");
         }
 
     }
@@ -176,7 +176,7 @@ public class ParkingSpaceActivity extends AppCompatActivity {
     }
 
     private void updateUi(String returnCode) {
-        if (returnCode.equals("200")) {
+        if (returnCode.contains("200")) {
             Log.d(TAG, "Return code is: " + returnCode);
             Toast.makeText(this, R.string.charging_enabled_toast, Toast.LENGTH_SHORT).show();
         } else {
@@ -260,6 +260,8 @@ public class ParkingSpaceActivity extends AppCompatActivity {
     private void setChargerIdTv(Charger charger) {
         if (charger.getId() != null) {
             mChargerIdTv.setText(charger.getId());
+//            mChargerIdTv.setText("Charger");
+
         } else {
             mChargerIdTv.setText(R.string.not_available_string);
         }
@@ -324,6 +326,8 @@ public class ParkingSpaceActivity extends AppCompatActivity {
     private void setId(ParkingSpace ps) {
         if (ps.getId() != null) {
             mParkingSpaceIdTv.setText(ps.getId());
+//            mParkingSpaceIdTv.setText("Parking Space");
+
         } else {
             mParkingSpaceIdTv.setText(R.string.not_known);
         }
@@ -372,6 +376,7 @@ public class ParkingSpaceActivity extends AppCompatActivity {
     private class StartChargingTask extends AsyncTask<Object, Object, String> {
         private String returnCode = null;
         private String response;
+        private String returnDescription;
 
 
         @Override
@@ -386,11 +391,12 @@ public class ParkingSpaceActivity extends AppCompatActivity {
             try {
                 stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
                 returnCode = getReturnCode(stream);
+                returnDescription = getReturnDescription(stream);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
 
-            return returnCode;
+            return returnCode + "" + returnDescription;
         }
 
         private String getResponse(Call<String> call) {
@@ -419,6 +425,19 @@ public class ParkingSpaceActivity extends AppCompatActivity {
             }
 
             return returnCode;
+        }
+
+        private String getReturnDescription(InputStream stream) {
+            String returnDescription = null;
+            try {
+                returnDescription = mXmlParser.parseReturnDescription(stream);
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return returnDescription;
         }
 
         private Call<String> callingApi(String parkingFacilityId, String parkingSpaceId, String chargerId) {

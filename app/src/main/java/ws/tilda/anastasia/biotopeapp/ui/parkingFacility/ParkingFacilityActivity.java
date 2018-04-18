@@ -49,12 +49,15 @@ public class ParkingFacilityActivity extends AppCompatActivity implements Parkin
         String parkingFacilityId = mParkingfacility.getId();
 
 
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle(parkingFacilityId);
+//            getSupportActionBar().setTitle(parkingFacilityId);
+            getSupportActionBar().setTitle("Parking Facility");
+
         }
 
         findParkingFacility(parkingFacilityId);

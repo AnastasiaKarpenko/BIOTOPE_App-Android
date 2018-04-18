@@ -30,7 +30,7 @@ import ws.tilda.anastasia.biotopeapp.objects.Plug;
 
 
 public class IotbnbParser {
-    private IotbnbResult result = new IotbnbResult();
+    private IotbnbResult result;
 
     public IotbnbResult parse(InputStream is) throws XmlPullParserException, IOException, IllegalStateException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -61,33 +61,6 @@ public class IotbnbParser {
         return result;
     }
 
-    public String parseReturnCode(InputStream is) throws XmlPullParserException, IOException {
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = null;
-        String returnCode = null;
-
-        try {
-            dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(is);
-
-            Element element = doc.getDocumentElement();
-            element.normalize();
-
-            NodeList objects = doc.getElementsByTagName("return");
-
-            if (objects.getLength() > 0) {
-                Node object = objects.item(0);
-                if (object.getNodeType() == Node.ELEMENT_NODE) {
-                    Element objectElement = (Element) object;
-                    returnCode = objectElement.getAttribute("returnCode");
-
-                }
-            }
-        } catch (ParserConfigurationException | SAXException e) {
-            e.printStackTrace();
-        }
-        return returnCode;
-    }
 
     private IotbnbResult parseObjectsElement(Element element) {
         IotbnbResult result = new IotbnbResult();
@@ -105,6 +78,8 @@ public class IotbnbParser {
 
     private IotbnbResult parseObjectResult(Element element) {
         IotbnbResult result = new IotbnbResult();
+        List<AvailableService> availableServices = new ArrayList<>();
+        result.setAvailableServices(availableServices);
 
         NodeList objects = element.getChildNodes();
         for (int i = 0; i < objects.getLength(); i++) { // id, object(list)
@@ -114,31 +89,13 @@ public class IotbnbParser {
                 Element objectElement = (Element) object;
 
                 if (objectElement.getTagName().equals("Object")) {
-                    List<AvailableService> availableServices = parseAvailableServicesList(objectElement);
-                    result.setAvailableServices(availableServices);
+                    AvailableService availableService = parseAvailableService(objectElement);
+                    availableServices.add(availableService);
+
                 }
             }
         }
         return result;
-    }
-
-    private List<AvailableService> parseAvailableServicesList(Element objectElement) {
-        List<AvailableService> availableServices = new ArrayList<>();
-        NodeList nodes = objectElement.getChildNodes();
-
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
-
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element nodeElement = (Element) node;
-
-                if (nodeElement.getTagName().equals("Object")) {
-                    AvailableService availableService = parseAvailableService(nodeElement);
-                    availableServices.add(availableService);
-                }
-            }
-        }
-        return availableServices;
     }
 
     private AvailableService parseAvailableService(Element nodeElement) {

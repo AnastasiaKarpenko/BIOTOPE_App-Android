@@ -87,6 +87,34 @@ public class XmlParser {
         return returnCode;
     }
 
+    public String parseReturnDescription(InputStream is) throws XmlPullParserException, IOException {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = null;
+        String returnDescription = null;
+
+        try {
+            dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(is);
+
+            Element element = doc.getDocumentElement();
+            element.normalize();
+
+            NodeList objects = doc.getElementsByTagName("return");
+
+            if (objects.getLength() > 0) {
+                Node object = objects.item(0);
+                if (object.getNodeType() == Node.ELEMENT_NODE) {
+                    Element objectElement = (Element) object;
+                    returnDescription = objectElement.getAttribute("description");
+
+                }
+            }
+        } catch (ParserConfigurationException | SAXException e) {
+            e.printStackTrace();
+        }
+        return returnDescription;
+    }
+
     private ParkingService parseObjectsElement(Element element) {
         ParkingService pService = new ParkingService();
         NodeList objects = element.getChildNodes();
@@ -100,6 +128,8 @@ public class XmlParser {
         }
         return pService;
     }
+
+
 
     private ParkingService parseObjectParkingService(Element element) {
         ParkingService parkingService = new ParkingService();

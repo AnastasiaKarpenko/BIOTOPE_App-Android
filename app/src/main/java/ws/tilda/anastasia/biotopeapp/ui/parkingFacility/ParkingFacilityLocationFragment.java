@@ -146,7 +146,10 @@ public class ParkingFacilityLocationFragment extends Fragment {
 
     private void setParkingFacilityId(ParkingFacility parkingFacility) {
         if (parkingFacility.getId() != null) {
-            mParkingFacilityIdTv.setText(parkingFacility.getId());
+//            mParkingFacilityIdTv.setText(parkingFacility.getId());
+            mParkingFacilityIdTv.setText("Parking Facility");
+
+
         } else {
             mParkingFacilityIdTv.setText(R.string.not_available_string);
         }

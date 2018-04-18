@@ -36,7 +36,9 @@ public class ParkingSpacesAdapter extends RecyclerView.Adapter<ParkingSpacesAdap
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mParkingSpace = mParkingSpaces.get(position);
 
-        holder.mParkingSpaceId.setText(holder.mParkingSpace.getId());
+
+//        holder.mParkingSpaceId.setText(holder.mParkingSpace.getId());
+        holder.mParkingSpaceId.setText("Parking Space No. " + position);
 
         setEvChargerAvailable(holder);
         setAvailable(holder);

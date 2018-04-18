@@ -29,8 +29,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,8 +39,8 @@ import java.util.Locale;
 import retrofit2.Call;
 import ws.tilda.anastasia.biotopeapp.BiotopeApp;
 import ws.tilda.anastasia.biotopeapp.R;
-import ws.tilda.anastasia.biotopeapp.networking.ApiClient;
-import ws.tilda.anastasia.biotopeapp.networking.ApiClient_2;
+import ws.tilda.anastasia.biotopeapp.networking.ServiceGenerator;
+import ws.tilda.anastasia.biotopeapp.objects.AvailableService;
 import ws.tilda.anastasia.biotopeapp.objects.GeoCoordinates;
 import ws.tilda.anastasia.biotopeapp.objects.ParkingFacility;
 import ws.tilda.anastasia.biotopeapp.objects.ParkingService;
@@ -241,7 +239,7 @@ public class SearchParkingMapFragment extends SupportMapFragment {
             LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
             addAllMarkersToMap(parkingLots, boundsBuilder);
         } else {
-            Toast.makeText(getContext(), "No available parking lot",
+            Toast.makeText(getContext(), R.string.no_available_parking_lot_toast,
                     Toast.LENGTH_SHORT).show();
         }
 
@@ -269,8 +267,9 @@ public class SearchParkingMapFragment extends SupportMapFragment {
 
             Marker itemMarker = addMarkerToMap(itemPoint, getMarkerColor(numberOfSpotsAvailable));
 
-            String snippetTitle = getResources().getString(R.string.map_parking_snippet_title,
-                    parkingLot.getId());
+//            String snippetTitle = getResources().getString(R.string.map_parking_snippet_title,
+//                    parkingLot.getId());
+            String snippetTitle = getString(R.string.EV_parking_lot_snippet_title);
             itemMarker.setTitle(snippetTitle);
 
             String snippetText = getResources().getString(R.string.click_to_see_details);
@@ -322,12 +321,13 @@ public class SearchParkingMapFragment extends SupportMapFragment {
     private String parseNodeUri(InputStream stream) {
         String nodeUri = null;
         try {
-            nodeUri = iotbnbParser.parse(stream).getAvailableServices().get(3).getOmiNodeUrl();
+            List<AvailableService> services = iotbnbParser.parse(stream).getAvailableServices();
+            nodeUri = services.get(94).getOmiNodeUrl();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-         return nodeUri;
+        return nodeUri;
     }
 
     private class SearchParkingTask extends AsyncTask<Object, Object, ParkingService> {
@@ -372,9 +372,10 @@ public class SearchParkingMapFragment extends SupportMapFragment {
 
 
         private Call<String> callingApi(Location location, String apiPath) {
-//            ApiClient_2.setNewBaseUrl(apiPath);
-//            ApiClient_2.RetrofitService retrofitService = ApiClient_2.getApi();
-            ApiClient.RetrofitService retrofitService = ApiClient.getApi();
+//            ApiClient.RetrofitService retrofitService = ApiClient.getApi();
+            ServiceGenerator.changeApiBaseUrl(apiPath);
+            ServiceGenerator.RetrofitService retrofitService = ServiceGenerator
+                    .createService(ServiceGenerator.RetrofitService.class);
 
             return retrofitService.getResponse(getQueryFormattedString(location, query));
 
@@ -440,7 +441,8 @@ public class SearchParkingMapFragment extends SupportMapFragment {
 
 
         private Call<String> callingApi(Location location) {
-            ApiClient_2.RetrofitService retrofitService = ApiClient_2.getApi();
+            ServiceGenerator.RetrofitService retrofitService = ServiceGenerator
+                    .createService(ServiceGenerator.RetrofitService.class);
             return retrofitService.getResponse(getQueryFormattedString(location, query));
         }
 
@@ -458,7 +460,7 @@ public class SearchParkingMapFragment extends SupportMapFragment {
 
         @Override
         protected void onPostExecute(String nodeUri) {
-//            findParkingLot(location, getString(R.string.query_find_evParkinglots), nodeUri);
+            findParkingLot(location, getString(R.string.query_find_evParkinglots), nodeUri);
             Toast.makeText(getContext(), nodeUri, Toast.LENGTH_SHORT).show();
         }
     }

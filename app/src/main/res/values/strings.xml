@@ -61,5 +61,7 @@
     <string name="smth_got_wrong_toast">Something got wrong. Try again!</string>
     <string name="update_needed_toast">Update needed</string>
     <string name="filter_name_iotbnb">IoTBnB</string>
+    <string name="no_available_parking_lot_toast">No available parking lot</string>
+    <string name="EV_parking_lot_snippet_title">EV Parking Lot</string>
 
 </resources>
