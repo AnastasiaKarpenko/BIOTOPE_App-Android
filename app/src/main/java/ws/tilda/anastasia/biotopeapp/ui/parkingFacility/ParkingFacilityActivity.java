@@ -22,7 +22,7 @@ import java.util.List;
 import retrofit2.Call;
 import ws.tilda.anastasia.biotopeapp.BiotopeApp;
 import ws.tilda.anastasia.biotopeapp.R;
-import ws.tilda.anastasia.biotopeapp.networking.ApiClient;
+import ws.tilda.anastasia.biotopeapp.networking.ServiceGenerator;
 import ws.tilda.anastasia.biotopeapp.objects.ParkingFacility;
 import ws.tilda.anastasia.biotopeapp.objects.ParkingService;
 import ws.tilda.anastasia.biotopeapp.objects.ParkingSpace;
@@ -33,6 +33,7 @@ import ws.tilda.anastasia.biotopeapp.ui.parkingSpace.ParkingSpaceActivity;
 public class ParkingFacilityActivity extends AppCompatActivity implements ParkingSpacesFragment.OnListFragmentInteractionListener {
     private static final String PARKING_FACILITY_EXTRA = "PARKING_FACILITY_EXTRA";
     public static final String PARKING_SPACE_EXTRA = "PARKING_SPACE_EXTRA";
+    private static final String NODE_URL_EXTRA = "NODE_URL_EXTRA";
     public static final String TAG = "ParkingFacilityActivity";
 
     private XmlParser xmlParser = new XmlParser();
@@ -45,9 +46,11 @@ public class ParkingFacilityActivity extends AppCompatActivity implements Parkin
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_parking_facility);
 
+
         mParkingfacility = getIntent().getParcelableExtra(PARKING_FACILITY_EXTRA);
         String parkingFacilityId = mParkingfacility.getId();
 
+        String nodeUrl = getIntent().getStringExtra(NODE_URL_EXTRA);
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -60,13 +63,13 @@ public class ParkingFacilityActivity extends AppCompatActivity implements Parkin
 
         }
 
-        findParkingFacility(parkingFacilityId);
+        findParkingFacility(parkingFacilityId, nodeUrl);
 
     }
 
-    public void findParkingFacility(String id) {
+    public void findParkingFacility(String id, String nodeUrl) {
         if (BiotopeApp.hasNetwork()) {
-            new FetchParkingFacilityTask().execute(id);
+            new FetchParkingFacilityTask().execute(id, nodeUrl);
         } else {
             Toast.makeText(this, R.string.no_network_connection_message, Toast.LENGTH_SHORT)
                     .show();
@@ -126,13 +129,15 @@ public class ParkingFacilityActivity extends AppCompatActivity implements Parkin
     private class FetchParkingFacilityTask extends AsyncTask<Object, Object, ParkingService> {
         private ParkingService parkingService = new ParkingService();
         private String response;
+        private String apiPath;
 
 
         @Override
         protected ParkingService doInBackground(Object... params) {
             String id = (String) params[0];
+            apiPath = (String) params[1];
 
-            Call<String> call = callingApi(id);
+            Call<String> call = callToServer(id, apiPath);
             InputStream stream = null;
             try {
                 stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
@@ -172,8 +177,10 @@ public class ParkingFacilityActivity extends AppCompatActivity implements Parkin
             return returnCode;
         }
 
-        private Call<String> callingApi(String id) {
-            ApiClient.RetrofitService retrofitService = ApiClient.getApi();
+        private Call<String> callToServer(String id, String apiPath) {
+            ServiceGenerator.changeApiBaseUrl(apiPath);
+            ServiceGenerator.RetrofitService retrofitService = ServiceGenerator
+                    .createService(ServiceGenerator.RetrofitService.class);
             return retrofitService.getResponse(getQueryFormattedString(id));
 
         }

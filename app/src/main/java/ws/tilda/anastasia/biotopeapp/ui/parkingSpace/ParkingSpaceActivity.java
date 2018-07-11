@@ -2,7 +2,6 @@ package ws.tilda.anastasia.biotopeapp.ui.parkingSpace;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +28,6 @@ import ws.tilda.anastasia.biotopeapp.objects.Charger;
 import ws.tilda.anastasia.biotopeapp.objects.ParkingFacility;
 import ws.tilda.anastasia.biotopeapp.objects.ParkingSpace;
 import ws.tilda.anastasia.biotopeapp.parsing.XmlParser;
-import ws.tilda.anastasia.biotopeapp.ui.searchParkingFacility.SearchParkingMapFragment;
 
 public class ParkingSpaceActivity extends AppCompatActivity {
     public static final String PARKING_SPACE_EXTRA = "PARKING_SPACE_EXTRA";
@@ -76,19 +74,18 @@ public class ParkingSpaceActivity extends AppCompatActivity {
         setViews();
 
         mParkingFacility = getIntent().getParcelableExtra(PARKING_FACILITY_EXTRA);
-        if(!mParkingFacility.equals(null)) {
+        if (!mParkingFacility.equals(null)) {
             mParkingFacilityId = mParkingFacility.getId();
         } else {
             Toast.makeText(this, R.string.smth_got_wrong_toast, Toast.LENGTH_SHORT).show();
         }
         mParkingSpace = getIntent().getParcelableExtra(PARKING_SPACE_EXTRA);
-        if(!mParkingSpace.equals(null)) {
+        if (!mParkingSpace.equals(null)) {
             mParkingSpaceId = mParkingSpace.getId();
             mChargerId = mParkingSpace.getCharger().getId();
         } else {
             Toast.makeText(this, R.string.smth_got_wrong_toast, Toast.LENGTH_SHORT).show();
         }
-
 
 
         mStartChargingButton.setOnClickListener(new View.OnClickListener() {
@@ -171,7 +168,7 @@ public class ParkingSpaceActivity extends AppCompatActivity {
         if (charger.isAvailable()) {
             mStartChargingButton.setEnabled(true);
         } else if (!charger.isAvailable()) {
-            mStartChargingButton.setEnabled(false);
+//            mStartChargingButton.setEnabled(false);
         }
     }
 
@@ -386,7 +383,7 @@ public class ParkingSpaceActivity extends AppCompatActivity {
             String chargerId = (String) params[2];
 
 
-            Call<String> call = callingApi(parkingFacilityid, parkingSpaceId, chargerId);
+            Call<String> call = callToServer(parkingFacilityid, parkingSpaceId, chargerId);
             InputStream stream = null;
             try {
                 stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
@@ -440,7 +437,7 @@ public class ParkingSpaceActivity extends AppCompatActivity {
             return returnDescription;
         }
 
-        private Call<String> callingApi(String parkingFacilityId, String parkingSpaceId, String chargerId) {
+        private Call<String> callToServer(String parkingFacilityId, String parkingSpaceId, String chargerId) {
             ApiClient.RetrofitService retrofitService = ApiClient.getApi();
             return retrofitService.getResponse(getQueryFormattedString(parkingFacilityId, parkingSpaceId, chargerId));
 
@@ -449,8 +446,8 @@ public class ParkingSpaceActivity extends AppCompatActivity {
 
         private String getQueryFormattedString(String parkingFacilityId, String parkingSpaceId, String chargerId) {
             String formattedQuery = String.format(getString(R.string.query_start_charging),
-                    parkingSpaceId,
                     parkingFacilityId,
+                    parkingSpaceId,
                     chargerId);
             return formattedQuery;
         }

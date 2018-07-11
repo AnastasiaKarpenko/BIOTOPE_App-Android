@@ -61,6 +61,7 @@ public class SearchParkingMapFragment extends SupportMapFragment {
     };
 
     public static final String PARKING_FACILITY_EXTRA = "PARKING_FACILITY_EXTRA";
+    private static final String NODE_URL_EXTRA = "NODE_URL_EXTRA";
 
     private GoogleApiClient mClient;
     private GoogleMap mMap;
@@ -69,10 +70,15 @@ public class SearchParkingMapFragment extends SupportMapFragment {
     private IotbnbParser iotbnbParser;
 
 
+    private String mNodeUrl;
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        setRetainInstance(true);
 
         xmlParser = new XmlParser();
         iotbnbParser = new IotbnbParser();
@@ -121,16 +127,17 @@ public class SearchParkingMapFragment extends SupportMapFragment {
                     @Override
                     public void onInfoWindowClick(Marker marker) {
                         ParkingFacility parkingLot = (ParkingFacility) marker.getTag();
-                        Intent intent = setIntent(parkingLot);
+                        Intent intent = setIntent(parkingLot, mNodeUrl);
 
                         startActivity(intent);
 
                     }
 
                     @NonNull
-                    private Intent setIntent(ParkingFacility parkingLot) {
+                    private Intent setIntent(ParkingFacility parkingLot, String nodeUrl) {
                         Intent intent = new Intent(getActivity(), ParkingFacilityActivity.class);
                         intent.putExtra(PARKING_FACILITY_EXTRA, parkingLot);
+                        intent.putExtra(NODE_URL_EXTRA, nodeUrl);
                         return intent;
                     }
                 });
@@ -204,6 +211,7 @@ public class SearchParkingMapFragment extends SupportMapFragment {
     public void findParkingLot(Location location, String query, String apiPath) {
         if (BiotopeApp.hasNetwork()) {
             new SearchParkingTask().execute(location, query, apiPath);
+
         } else {
             Toast.makeText(getContext(), R.string.no_network_connection_message, Toast.LENGTH_SHORT)
                     .show();
@@ -322,7 +330,7 @@ public class SearchParkingMapFragment extends SupportMapFragment {
         String nodeUri = null;
         try {
             List<AvailableService> services = iotbnbParser.parse(stream).getAvailableServices();
-            nodeUri = services.get(94).getOmiNodeUrl();
+            nodeUri = services.get(1).getOmiNodeUrl();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -343,7 +351,9 @@ public class SearchParkingMapFragment extends SupportMapFragment {
             query = (String) params[1];
             apiPath = (String) params[2];
 
-            Call<String> call = callingApi(location, apiPath);
+            setNodeUrl(apiPath);
+
+            Call<String> call = callToServer(location, apiPath);
             InputStream stream = null;
             try {
                 stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
@@ -371,8 +381,7 @@ public class SearchParkingMapFragment extends SupportMapFragment {
         }
 
 
-        private Call<String> callingApi(Location location, String apiPath) {
-//            ApiClient.RetrofitService retrofitService = ApiClient.getApi();
+        private Call<String> callToServer(Location location, String apiPath) {
             ServiceGenerator.changeApiBaseUrl(apiPath);
             ServiceGenerator.RetrofitService retrofitService = ServiceGenerator
                     .createService(ServiceGenerator.RetrofitService.class);
@@ -396,6 +405,7 @@ public class SearchParkingMapFragment extends SupportMapFragment {
         @Override
         protected void onPostExecute(ParkingService parkingService) {
             updateUI(parkingService);
+
         }
     }
 
@@ -412,7 +422,7 @@ public class SearchParkingMapFragment extends SupportMapFragment {
             query = (String) params[1];
             apiPath = (String) params[2];
 
-            Call<String> call = callingApi(location);
+            Call<String> call = callToServer(location, apiPath);
             InputStream stream = null;
             try {
                 stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
@@ -439,11 +449,13 @@ public class SearchParkingMapFragment extends SupportMapFragment {
             return response;
         }
 
-
-        private Call<String> callingApi(Location location) {
+        private Call<String> callToServer(Location location, String apiPath) {
+            ServiceGenerator.changeApiBaseUrl(apiPath);
             ServiceGenerator.RetrofitService retrofitService = ServiceGenerator
                     .createService(ServiceGenerator.RetrofitService.class);
+
             return retrofitService.getResponse(getQueryFormattedString(location, query));
+
         }
 
 
@@ -461,8 +473,14 @@ public class SearchParkingMapFragment extends SupportMapFragment {
         @Override
         protected void onPostExecute(String nodeUri) {
             findParkingLot(location, getString(R.string.query_find_evParkinglots), nodeUri);
+            setNodeUrl(nodeUri);
 //            Toast.makeText(getContext(), nodeUri, Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void setNodeUrl(String nodeUrl) {
+        mNodeUrl = nodeUrl;
+    }
+
 
 }

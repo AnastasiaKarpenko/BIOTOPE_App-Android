@@ -161,7 +161,7 @@ public class XmlParser {
                 Element nodeElement = (Element) node;
 
                 if (nodeElement.getTagName().equals("Object")) {
-                    if (nodeElement.getAttribute("type").equals("schema:ParkingFacility")) {
+                    if (nodeElement.getAttribute("type").equals("schema:ParkingFacility")|| nodeElement.getAttribute("type").equals("mv:ParkingFacility")) {
                         ParkingFacility parkingFacility = parseParkingFacility(nodeElement);
                         parkingLots.add(parkingFacility);
                     }
